@@ -1,0 +1,14 @@
+sudo snap install microk8s --classic
+sudo microk8s status --wait-ready
+sudo usermod -a -G microk8s $USER
+sudo chown -f -R $USER ~/.kube
+microk8s.enable dns dashboard storage
+microk8s.enable kubeflow
+
+Desactivar
+sudo microk8s disable kubeflow
+
+
+
+
+

@@ -1,0 +1,50 @@
+suococ do systemctl start docker.service
+oc cluster up --skip-registry-check=true
+Corre como sudo
+./oc cluster down
+./oc cluster up --public-hostname=192.168.239.128 --skip-registry-check=true
+
+./oc get identity
+./oc adm policy add-cluster-role-to-user cluster-admin developer
+LOGIN WITH DEVELOPER
+
+./oc login -u system https://192.168.239.128:8443/
+
+
+
+Correr docker
+systemctl start docker
+systemctl enable docker
+systemctl status docker
+
+docker build -t "opendatahub-operator:Dockerfile" .
+
+
+Intall OPEN DATA HUB
+
+
+LOGIN AS ADMIN
+./oc login -u system:admin
+Intall OPEN DATA HUB
+./oc apply -f op/deploy/crds/opendatahub_v1alpha1_opendatahub_crd.yaml
+./oc apply -f op/deploy/service_account.yaml
+./oc apply -f op/deploy/role.yaml
+./oc apply -f op/deploy/role_binding.yaml
+./oc apply -f op/deploy/operator.yaml
+
+
+
+# customize odh manifest
+./oc apply -f op/deploy/crds/seldon-deployment-crd.yaml
+./oc apply -f op/deploy/crds/argo-crd.yaml
+
+./oc apply -f op/deploy/operator.yaml
+
+./oc policy add-role-to-user system:image-puller system:serviceaccount:default:default -n openshift-core-operators
+cp op/deploy/crds/opendatahub_v1alpha1_opendatahub_cr.yaml my_environment_cr.yaml
+
+./oc apply -f my_environment_cr.yaml
+
+### No aplicado
+
+oc adm policy add-scc-to-user anyuid system:serviceaccount:<NAMESPACE>:default

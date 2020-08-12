@@ -1,0 +1,73 @@
+VALIDAR
+Correr docker
+systemctl start docker
+systemctl enable docker
+systemctl status docker
+
+
+DNF
+https://www.vultr.com/docs/use-dnf-to-manage-software-packages-on-centos-7
+REMOTE SERVER
+https://www.openshift.com/blog/accessing-codeready-containers-on-a-remote-server/
+https://www.haproxy.com/blog/the-four-essential-sections-of-an-haproxy-configuration/
+
+sudo firewall-cmd --add-port=53/tcp --permanent
+
+OJO sudo yum install policycoreutils-python
+
+export SERVER_IP=192.168.239.131
+export CRC_IP=192.168.130.11
+
+
+
+ARREGLAR FIREWALL
+I could not solve it until I did the following
+
+# systemctl restart dbus
+# systemctl restart firewalld
+
+crc.exe start --log-level debug
+
+
+
+CENTOS 
+Instalar Docker
+ --public-hostname=192.168.239.128 
+ 
+./crc start -p pull-secret.txt  --log-level debug --nameserver=192.168.239.133
+
+
+SWAP MEMORI
+https://www.digitalocean.com/community/tutorials/how-to-add-swap-on-centos-7
+
+
+
+
+crc config set memory 8192
+
+export PATH="/home/centos/.crc/bin/oc:$PATH"
+
+export KUBECONFIG=~/.crc/machines/crc/kubeconfig 
+
+
+TEST
+ping console-openshift-console.apps-crc.testing 
+ping 192.168.130.11.apps-crc.testing
+
+
+./crc console
+oc get routes -n istio-system
+
+
+CONFIGURAR OC
+./crc oc-env
+export PATH="/home/centos/.crc/bin/oc:$PATH"
+export PATH="/home/centos/.crc/bin/oc:$PATH"
+export KUBECONFIG=~/.crc/machines/crc/kubeconfig 
+oc get co
+
+oc login -u developer -p developer https://192.168.130.11.apps-crc.testing:6443
+
+oc login -u developer -p developer https://api.crc.testing:6443
+
+ 

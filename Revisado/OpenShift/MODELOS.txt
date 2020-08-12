@@ -1,0 +1,4 @@
+https://rapidminer.com/get-started/
+COMPARATIVAS
+https://drivendata.github.io/cookiecutter-data-science/
+ESTRUVUTURA

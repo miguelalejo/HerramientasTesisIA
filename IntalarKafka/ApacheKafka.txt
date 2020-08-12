@@ -1,0 +1,148 @@
+--INSTALAR JDK
+sudo apt-get update
+sudo apt-get install openjdk-8-jdk
+--INSTALAR ZOOKEEPERD
+sudo apt-get install zookeeperd
+sudo systemctl status zookeeper
+sudo systemctl start zookeeper
+sudo systemctl enable zookeeper
+sudo apt-get install net-tools
+sudo netstat -tulpen | grep 2181
+--INSTALAR KAFKA
+sudo useradd kafka -m
+sudo passwd kafka
+sudo adduser kafka sudo
+su -l kafka
+mkdir ~/Downloads
+curl "https://downloads.apache.org/kafka/2.5.0/kafka_2.12-2.5.0.tgz" -o ~/Downloads/kafka.tgz
+mkdir ~/kafka && cd ~/kafka
+tar -xvzf ~/Downloads/kafka.tgz --strip 1
+vi ~/kafka/config/server.properties
+--Agregar 
+DETECTA CONECION CON LA COLA
+
+listeners=PLAINTEXT://192.168.1.120:9092
+advertised.listeners=PLAINTEXT://192.168.1.120:9092
+
+delete.topic.enable = true
+
+--COFIGURAR ZOOPEEPERD KAFKA
+sudo vi /etc/systemd/system/zookeeper.service
+--Agregar
+[Unit]
+Requires=network.target remote-fs.target
+After=network.target remote-fs.target
+
+[Service]
+Type=simple
+User=kafka
+ExecStart=/home/kafka/kafka/bin/zookeeper-server-start.sh /home/kafka/kafka/config/zookeeper.properties
+ExecStop=/home/kafka/kafka/bin/zookeeper-server-stop.sh
+Restart=on-abnormal
+
+[Install]
+WantedBy=multi-user.target
+
+--COFIGIRAR SERVICIO KAFKA
+sudo vi /etc/systemd/system/kafka.service
+
+[Unit]
+Requires=zookeeper.service
+After=zookeeper.service
+
+[Service]
+Type=simple
+User=kafka
+ExecStart=/bin/sh -c '/home/kafka/kafka/bin/kafka-server-start.sh /home/kafka/kafka/config/server.properties > /home/kafka/kafka/kafka.log 2>&1'
+ExecStop=/home/kafka/kafka/bin/kafka-server-stop.sh
+Restart=on-abnormal
+
+[Install]
+WantedBy=multi-user.target
+
+
+--ARRANCAR
+sudo systemctl start kafka
+sudo journalctl -u kafka
+sudo systemctl enable kafka
+
+--CONFGIURAR BASH
+vi  ~/.bash_profile
+--AGREGAR
+export PATH="/home/kafka/kafka/bin/:$PATH"
+source ~/.bash_profile
+
+sudo reboot
+
+### MOTRAR COLAS
+kafka-topics.sh --list --zookeeper localhost:2181
+--PRUEBAS
+--CREAR TOPIOCO
+kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic TutorialTopic
+
+kafka-console-producer.sh --broker-list 0.0.0.0:9092 --topic TutorialTopic
+--CONSUMIR
+kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic TutorialTopic --from-beginning
+--ENVIAR MENSAJE
+echo "Hello Como estas" | kafka-console-producer.sh --broker-list localhost:9092 --topic TutorialTopic > /dev/null
+
+
+PRUEBA EXTERNO
+kafka-topics.sh --create --zookeeper 192.168.1.20:2181 --replication-factor 1 --partitions 1 --topic TutorialTopicExterno
+
+kafka-console-producer.sh --broker-list 192.168.1.20:9092 --topic TutorialTopicExterno
+
+kafka-console-consumer.sh --bootstrap-server 192.168.1.20:9092 --topic TutorialTopicExterno --from-beginning
+
+echo "Hello Como estas" | kafka-console-producer.sh --broker-list 192.168.1.20:9092 --topic TutorialTopicExterno > /dev/null
+
+REDUCIR TIEMPO DE VIDA EN LA COLA
+kafka-configs.sh --zookeeper 192.168.1.20:2181 --entity-type topics --alter --entity-name TutorialTopicExterno --add-config retention.ms=100
+
+kafka-topics.sh --zookeeper 192.168.1.20:2181 --delete --topic TutorialTopicExterno
+
+
+ADMINSITRADOR COLAS
+
+curl "https://downloads.apache.org/kafka/2.5.0/kafka_2.12-2.5.0.tgz" 
+export JAVA_HOME="/home/ubuntu/jdk-11.0.8"
+export PATH="/home/ubuntu/jdk-11.0.8:$PATH"
+./sbt -java-home /home/ubuntu/jdk-11.0.8 clean dist
+COPIAR DE LA RUTA ZIP
+/home/ubuntu/CMAK-master/target/universal
+
+
+--COFIGIRAR SERVICIO CMAk
+sudo vi /etc/systemd/system/cmak-server.service
+
+[Unit]
+Requires=network.target remote-fs.target
+After=network.target remote-fs.target
+
+[Service]
+Type=simple
+User=ubuntu
+ExecStart=/bin/sh -c '/home/ubuntu/cmak-3.0.0.5/bin/cmak -java-home /home/ubuntu/jdk-11.0.8'
+Restart=on-abnormal
+
+[Install]
+WantedBy=multi-user.target
+
+ARRANCA SERVICIO
+sudo systemctl enable cmak-server
+systemctl start cmak-server
+
+
+RUTA
+Configurar application conf
+http://192.168.1.20:9000/
+
+
+
+##PAQUETES PYTHON JSON
+pip install msgpack
+
+
+
+
+

@@ -1,0 +1,15 @@
+{
+  "apps" : [{
+	"name"        : "bash-script",
+	"script"      : "./bashscript.sh",
+	"watch"       : "../"	
+  },{
+	"name"        : "bash-dir",
+	"script"      : "./bashdir.sh",
+	"watch"       : "../"	
+  },{
+	"name"        : "bachecho",
+	"script"      : "./bachecho.sh",
+	"watch"       : "../"	
+  }]
+}

@@ -1,0 +1,31 @@
+https://www.digitalocean.com/community/tutorials/how-to-add-swap-space-on-ubuntu-16-04
+
+sudo dd if=/dev/zero of=/swapfile count=20096 bs=1MiB
+sudo chmod 600 /swapfile
+ls -lh /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+sudo vi /etc/fstab
+Agregar al final
+/swapfile   swap    swap    sw  0   0
+
+Verficar memoria
+free -m
+swapon -s
+
+
+
+Fake Memory
+
+mkdir fake-meminfo && cd fake-meminfo
+cp /proc/meminfo .
+chmod +w meminfo
+sed -Ei 's,^MemTotal:        [0-9]+ kB,MemTotal:        24839012 kB,' meminfo   # replace 8839012 with an amount of RAM you want to pretend you have
+free -m  # check how much RAM you have now
+
+sudo mount --bind meminfo /proc/meminfo                                 
+free -m  # check how much RAM you pretend to have after replacing /proc/meminfo
+
+
+sudo umount /proc/meminfo # restore an original /proc/meminfo
+free -m

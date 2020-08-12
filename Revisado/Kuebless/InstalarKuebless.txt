@@ -1,0 +1,131 @@
+sudo snap install microk8s --classic
+sudo microk8s.status
+sudo microk8s.status
+
+
+sudo microk8s kubectl get all --all-namespaces
+
+sudo microk8s dashboard-proxy
+
+eyJhbGciOiJSUzI1NiIsImtpZCI6InVBalNKbEhaQXZqbTZpMVhuQnNIaXF3aTNTWDNTQVpoRjY2OUU2dWhLNk0ifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJkZWZhdWx0LXRva2VuLXE4ZGo2Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6ImRlZmF1bHQiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiI4NWE4YmZhYi0yNGMyLTRiZWEtYWNmYi0xOWE2NGUxNzNjNmYiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6a3ViZS1zeXN0ZW06ZGVmYXVsdCJ9.rmIsXyYQBaTIhnG919aq0rkx3juTB9pp-5RJXXJ7LzjH6OPB80OKgOor8KzoGLgtC73MBc82dO2sFiQ6Bu_8DASDwZJluL5GfbdTQpjXrZuyn77SoFrNgjJwjASwnM5Vr-e650Rxzeo35cQhRdBEbZrYZaRxLhETVKU_t4cG_Uuffnj4hCvQ1SQF3xUVckRnP6qo10gRUcZQP4nDLljneGbfQs_Gqx0kykOjTBJ1gx6krYrF2cT17Ap7q0PGfJqgjq40bqXlTHsWogj4QvbiPDOzrAgjgHpPwiSUVfynLY7Xz8HQRjka6OluVKaKNuox_83CnKMCcObC3-0OhqHJpA
+
+
+https://192.168.239.137:10443/#/login
+
+
+
+
+
+##Instalar Kubectl
+curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+chmod +x ./kubectl
+sudo mv ./kubectl /usr/local/bin/kubectl
+kubectl version --client
+##2da Forma No funciona
+sudo apt-get update && sudo apt-get install -y apt-transport-https
+snap install kubectl --classic
+kubectl version --client
+
+
+##Codfigurar
+microk8s config
+cd $HOME
+mkdir .kube
+cd .kube
+sudo microk8s config > config
+
+kubectl get pods --all-namespaces | grep dashboard
+
+
+export RELEASE=$(curl -s https://api.github.com/repos/kubeless/kubeless/releases/latest | grep tag_name | cut -d '"' -f 4)
+kubectl create ns kubeless
+kubectl create -f https://github.com/kubeless/kubeless/releases/download/$RELEASE/kubeless-$RELEASE.yaml
+kubectl get pods -n kubeless
+kubectl get deployment -n kubeless
+kubectl get customresourcedefinition
+
+
+
+##Cliente 
+export OS=$(uname -s| tr '[:upper:]' '[:lower:]')
+curl -OL https://github.com/kubeless/kubeless/releases/download/$RELEASE/kubeless_$OS-amd64.zip && \
+  unzip kubeless_$OS-amd64.zip && \
+  sudo mv bundles/kubeless_$OS-amd64/kubeless /usr/local/bin/
+
+##Pruebas
+kubeless function deploy hello --runtime python2.7 \
+                                --from-file test.py \
+                                --handler test.hello
+								
+								
+kubectl get functions
+kubeless function ls
+ 
+kubeless function call hello --data 'Hello world!' 
+								
+kubectl proxy --port=8080 &
+kubectl proxy --address='0.0.0.0' --port=8002 --accept-hosts='.*' &
+
+{
+    "url": "http://192.168.239.138:8002/api/v1/namespaces/default/services/hello:http-function-port/proxy",
+    "raw_url": "http://192.168.239.138:8002/api/v1/namespaces/default/services/hello:http-function-port/proxy/",
+    "method": "post",
+    "headers": {
+        "Content-Type": "application/json"
+    },
+    "data": {
+        "{\"Another\": \"Echo\"}": ""
+    }
+}
+
+
+
+## crear http
+kubeless trigger http create hello --function-name hello
+kubeless trigger http create get-python --function-name get-python --path echo --hostname 192.168.239.137
+
+
+
+
+
+
+
+
+
+##No Funciona
+###Instalar Docker
+
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io
+sudo docker run hello-world
+  
+
+sudo apt-get install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg-agent \
+    software-properties-common
+### UI	
+curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 \
+  && chmod +x minikube  
+sudo cp minikube /usr/local/bin && rm minikube
+sudo minikube start
+kubectl create -f https://raw.githubusercontent.com/kubeless/kubeless-ui/master/k8s.yaml
+
+
+##Instalar YARN
+curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+sudo apt update && sudo apt install yarn
+##Validar
+yarn --version
+
+
+

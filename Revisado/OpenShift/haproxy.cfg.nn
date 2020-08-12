@@ -1,0 +1,37 @@
+global
+	debug
+
+defaults
+    timeout connect 10s
+    timeout client 30s
+    timeout server 30s
+    log global
+    mode http
+    option tcplog
+    maxconn 3000
+
+frontend apps
+	bind 192.168.239.131:80
+	bind 192.168.239.131:443
+	option tcplog
+	mode tcp
+	default_backend apps
+
+backend apps
+	mode tcp
+	balance roundrobin
+	option ssl-hello-chk
+	server webserver1 192.168.130.11:80 check
+	server webserver1 192.168.130.11:443 check
+
+frontend api
+	bind 192.168.239.131:6443
+	option tcplog
+	mode tcp
+	default_backend api
+
+backend api
+	mode tcp
+	balance roundrobin
+	option ssl-hello-chk
+	server webserver1 192.168.130.11:6443 check

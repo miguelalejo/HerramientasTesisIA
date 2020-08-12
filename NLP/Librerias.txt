@@ -1,0 +1,25 @@
+pip install nltk
+##Agregar Librerias
+import nltk
+## nltk.download() Con Errores
+nltk.download('punkt')
+
+
+pip install -U textblob
+python -m textblob.download_corpora
+
+
+
+##Traductores de Texto
+pip install translate
+pip install googletrans
+
+
+#Instalar keras
+pip install keras
+
+
+
+#Trabajo Con Textos
+https://github.com/RaRe-Technologies/gensim
+https://github.com/explosion/spaCy

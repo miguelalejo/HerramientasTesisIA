@@ -1,0 +1,7 @@
+apps:
+  - script : './bashscript.sh'
+    name : 'bash-script'
+  - script : './bashdir.sh'
+    name : 'bash-dir'
+  - script : './bachecho.sh'
+    name : 'bachecho'

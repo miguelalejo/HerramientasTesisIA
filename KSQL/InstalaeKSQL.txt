@@ -1,0 +1,61 @@
+DESCARGAR y DESCOMPIMIR
+https://packages.confluent.io/archive/5.5/confluent-community-5.5.1-2.12.tar.gz
+
+https://docs.confluent.io/4.1.2/ksql/docs/installation/installing.html
+
+AGGREG CONGI
+bootstrap.servers=192.168.1.20:9092
+listeners=http://192.168.1.20:8088
+ui.enabled=true
+
+ARRANCAR SERVER
+./bin/ksql-server-start ./etc/ksqldb/ksql-server-ia.properties
+
+
+--COFIGIRAR SERVICIO KAFKA
+sudo vi /etc/systemd/system/ksql-server.service
+
+[Unit]
+Requires=network.target remote-fs.target
+After=network.target remote-fs.target
+
+[Service]
+Type=simple
+User=ubuntu
+ExecStart=/bin/sh -c '/home/ubuntu/confluent-5.5.1/bin/ksql-server-start /home/ubuntu/confluent-5.5.1/etc/ksqldb/ksql-server-ia.properties'
+ExecStop=/home/ubuntu/confluent-5.5.1/bin/ksql-stop
+Restart=on-abnormal
+
+[Install]
+WantedBy=multi-user.target
+
+
+
+ARRANCA SERVICIO
+systemctl start ksql-server.service 
+systemctl start ksql-server.service 
+systemctl stop ksql-server.service 
+
+
+URL TEST
+http://192.168.1.20:8088/info
+
+
+
+CLIENTE PYTHON
+
+pip install ksql
+https://pypi.org/project/ksql/
+
+CLIENTE CONFLUENT
+pip install confluent-kafka
+
+CLIENTE UBUNTU
+./ksql http://192.168.1.20:8088
+
+PARA DESARROLLO CONFIGURAR 
+SET auto.offest.reset = 'earliest'
+
+
+VIDEOS
+https://docs.ksqldb.io/en/latest/tutorials/

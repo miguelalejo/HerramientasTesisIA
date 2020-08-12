@@ -1,0 +1,68 @@
+https://github.com/alexnzarov/pm2-web-ui
+###Instalar MONGO DB
+sudo apt-get install gnupg
+##Instalar MONGODB
+wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -
+echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
+sudo apt-get update
+sudo apt-get install -y mongodb-org
+sudo systemctl start mongod
+sudo systemctl status mongod
+sudo systemctl enable mongod
+
+sudo vi /etc/mongod.conf
+bind 0.0.0.0
+
+##Instalar un cliente
+NosQLManager
+##Crear base 
+pm2-web-ui
+
+## Insttall pm2
+sudo apt install npm
+sudo npm install pm2@latest -g
+
+#Crear archivo app.yaml
+
+apps:
+  - script : './bashscript.sh'
+    name : 'bash-script'
+  - script : './bashdir.sh'
+    name : 'bash-dir'
+	
+
+pm2 start app.yaml
+pm2 start app.yaml --watch
+pm2 monit
+pm2 delete all
+
+
+##Instalar WEB UI
+##pm2-web-ui-master.zip
+git clone https://github.com/alexnzarov/pm2-web-ui.git
+cd pm2-web-ui
+sudo npm i
+sudo npm run build
+npm run start &
+
+pm2 start sudo npm --name "pm2-web-ui" -- start
+
+http://192.168.239.138:3000/
+
+
+Username: root
+Password: i am dumb
+
+Password is the same as SALT that you specified in the environment
+salt: process.env.SALT || 'i am dumb'
+
+const config = {
+  mongodbUri: process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/pm2-web-ui',
+  salt: process.env.SALT || 'i am dumb',
+};
+
+
+
+##Crear ecosystema
+pm2 ecosystem
+cat vi ecosystem.config.js

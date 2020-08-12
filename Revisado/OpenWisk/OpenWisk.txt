@@ -1,0 +1,143 @@
+openwhisk-deploy-kube-master.zip
+sudo snap install microk8s --classic
+microk8s.status
+sudo microk8s.status
+sudo microk8s enable dashboard dns registry istio
+
+
+sudo microk8s kubectl get all --all-namespaces
+
+sudo microk8s dashboard-proxy
+
+eyJhbGciOiJSUzI1NiIsImtpZCI6InVBalNKbEhaQXZqbTZpMVhuQnNIaXF3aTNTWDNTQVpoRjY2OUU2dWhLNk0ifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJkZWZhdWx0LXRva2VuLXE4ZGo2Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6ImRlZmF1bHQiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiI4NWE4YmZhYi0yNGMyLTRiZWEtYWNmYi0xOWE2NGUxNzNjNmYiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6a3ViZS1zeXN0ZW06ZGVmYXVsdCJ9.rmIsXyYQBaTIhnG919aq0rkx3juTB9pp-5RJXXJ7LzjH6OPB80OKgOor8KzoGLgtC73MBc82dO2sFiQ6Bu_8DASDwZJluL5GfbdTQpjXrZuyn77SoFrNgjJwjASwnM5Vr-e650Rxzeo35cQhRdBEbZrYZaRxLhETVKU_t4cG_Uuffnj4hCvQ1SQF3xUVckRnP6qo10gRUcZQP4nDLljneGbfQs_Gqx0kykOjTBJ1gx6krYrF2cT17Ap7q0PGfJqgjq40bqXlTHsWogj4QvbiPDOzrAgjgHpPwiSUVfynLY7Xz8HQRjka6OluVKaKNuox_83CnKMCcObC3-0OhqHJpA
+
+
+https://192.168.239.137:10443/#/login
+
+
+
+
+
+##Instalar Kubectl
+curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+chmod +x ./kubectl
+sudo mv ./kubectl /usr/local/bin/kubectl
+kubectl version --client
+##2da Forma No funciona
+sudo apt-get update && sudo apt-get install -y apt-transport-https
+snap install kubectl --classic
+kubectl version --client
+
+
+##Codfigurar
+microk8s config
+cd $HOME
+mkdir .kube
+cd .kube
+microk8s config > config
+
+kubectl get pods --all-namespaces | grep dashboard
+
+## Intalar helm
+curl https://baltocdn.com/helm/signing.asc | sudo apt-key add -
+sudo apt-get install apt-transport-https --yes
+echo "deb https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+sudo apt-get update
+sudo apt-get install helm
+
+
+#Istalar kind
+curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.8.1/kind-linux-amd64
+chmod +x ./kind
+sudo mv ./kind /usr/local/bin/kind
+
+
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+ role: control-plane
+ role: worker
+  extraPortMappings:
+     hostPort: 31001
+     containerPort: 31001
+ role: worker
+
+
+
+
+Overview
+You will use Helm to deploy OpenWhisk to your Kubernetes cluster. There are four deployment steps that are described in more detail below in the rest of this section.
+
+Initial cluster setup. You will label your Kubernetes worker nodes to indicate their intended usage by OpenWhisk.
+Customize the deployment. You will create a mycluster.yaml that specifies key facts about your Kubernetes cluster and the OpenWhisk configuration you wish to deploy.
+Deploy OpenWhisk with Helm. You will use Helm and mycluster.yaml to deploy OpenWhisk to your Kubernetes cluster.
+Configure the wsk CLI. You need to tell the wsk CLI how to connect to your OpenWhisk deployment.
+#Descargar
+https://github.com/apache/openwhisk-deploy-kube#deploy-with-helm
+
+vi mycluster.yaml
+
+whisk:
+  ingress:
+    type: NodePort
+    apiHostName: <INTERNAL_IP>
+    apiHostPort: 31001
+
+invoker:
+  containerFactory:
+    impl: "kubernetes"
+
+nginx:
+  httpsNodePort: 31001
+	
+	
+
+kubectl create namespace openwhisk
+kubectl label nodes --all openwhisk-role=invoker
+
+
+##Validar helm install owdev ./helm/openwhisk -n openwhisk --create-namespace
+helm install owdev ./helm/openwhisk -n openwhisk --create-namespace -f mycluster.yaml
+helm upgrade owdev ./helm/openwhisk -n openwhisk --create-namespace -f mycluster.yaml
+helm test owdev -n openwhisk
+
+kubectl get secret --all-namespaces -l "owner=helm"
+
+# Get all releases
+helm ls --all-namespaces
+# Delete release
+helm uninstall owdev -n openwhisk
+
+NGIX Install
+sudo wget https://nginx.org/keys/nginx_signing.key
+sudo apt-key add nginx_signing.key
+sudo vi /etc/apt/sources.list
+deb https://nginx.org/packages/mainline/ubuntu/ trusty nginx
+deb-src https://nginx.org/packages/mainline/ubuntu/ trusty nginx
+sudo apt-get install nginx
+
+
+#Cliente Prueba windows
+wsk property set --apihost 0.0.0.0:31001
+wsk property set --apihost 192.168.239.137:31001
+wsk property set --auth 23bc46b1-71f6-4ed5-8c54-816aa4f8c502:123zO3xZCLrMN6v2BKK1dXYFpXlPkccOFqm12CdAsMgRU4VrNZ9lyGVCGuMDGIwP
+
+
+/*
+Based on the time (of the OpenWhisk runtime at least!), return
+an appropriate greeting.
+*/
+function main() {
+let message = '';
+let timeOfDay = new Date().getHours();
+if(timeOfDay < 12) {
+message = 'Good morning!';
+} else if(timeOfDay < 18) {
+message = 'Good Afternoon!';
+} else {
+message = 'Good evening!';
+}
+return { greeting:message };
+}
+This action
+
