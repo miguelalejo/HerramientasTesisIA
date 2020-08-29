@@ -67,11 +67,12 @@ sudo journalctl -u kafka
 sudo systemctl enable kafka
 
 --CONFGIURAR BASH
-vi  ~/.bash_profile
---AGREGAR
-export PATH="/home/kafka/kafka/bin/:$PATH"
-source ~/.bash_profile
+sudo vi /etc/profile
 
+export PATH=/home/kafka/kafka/bin/:$PATH
+
+
+sudo deluser kafka sudo
 sudo reboot
 
 ### MOTRAR COLAS

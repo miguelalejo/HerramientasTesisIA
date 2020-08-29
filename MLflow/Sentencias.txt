@@ -1,4 +1,66 @@
+##Instalar postgres 
+sudo apt update
+sudo apt install postgresql postgresql-contrib
+sudo -u postgres psql
+
+##Cambiar clave
+
+sudo -u postgres psql
+\password
+
+sudo -u postgres createdb  mlflowbd
+
 https://mlflow.org/docs/latest/quickstart.html
+##Isntalar
+pip install mlflow
+pip3 install mlflow
+sudo pip3 install mlflow
+sudo apt-get install libpq-dev python-dev
+sudo apt-get install -y python3-psycopg2
+pip3 install psycopg2
+sudo pip3 install psycopg2
+
+
+
+
+#Crear base de datos mlflowbd
+mlflow server --backend-store-uri postgresql://postgres:postgres@127.0.0.1:5432/mlflowbd --default-artifact-root /home/ubuntu/ml-flow-proyectos/mlruns    --host 0.0.0.0 --port 5100
+mlflow server --host '0.0.0.0' --port '5100' --backend-store-uri 'postgresql://postgres:postgres@127.0.0.1:5432/mlflowbd' --default-artifact-root 'file:///home/ubuntu/ml-flow-proyectos/mlruns' &
+
+
+#Crear serrvicio arranque
+sudo vi /etc/systemd/system/mlflow-server.service
+
+[Unit]
+Requires=network.target remote-fs.target
+After=network.target remote-fs.target
+
+[Service]
+Type=simple
+User=ubuntu
+Environment="BDCON='postgresql://postgres:postgres@127.0.0.1:5432/mlflowbd'"
+Environment="MLDIR='file:///home/ubuntu/ml-flow-proyectos/mlruns'"
+ExecStart=/bin/sh -c 'mlflow server --host "0.0.0.0" --port "5100" --backend-store-uri "postgresql://postgres:postgres@127.0.0.1:5432/mlflowbd" --default-artifact-root "file:///home/ubuntu/ml-flow-proyectos/mlruns" >> /home/ubuntu/ml-flow-proyectos/mflow.upstart.log'
+ExecStop=kill $(pgrep mlflow)
+Restart=on-abnormal
+
+[Install]
+WantedBy=default.target
+
+
+#ARRANCA SERVICIO
+sudo systemctl enable mlflow-server.service
+systemctl start mlflow-server.service
+systemctl stop mlflow-server.service
+
+
+
+
+
+
+ pg_config is required to build psycopg2 from source.  Please add the directory
+    containing pg_config to the $PATH or specify the full executable path with the
+	
 LEVANTAR UI
 CD C:\Users\PC-MIKE\UNIR\UNIR_actividades\TFM\TESIS
 
@@ -84,13 +146,17 @@ mlflow server \
     --host 0.0.0.0
 
 
-
+#Windows
+pip install psycopg2
+pip3 install psycopg2
 ##Instalar server postgres
 #postgresql://postgres:postgres@localhost:5432/mlflowpos
 pip install psycopg2
 mlflow server --backend-store-uri postgresql://postgres:postgres@localhost:5432/mlflowpos   --default-artifact-root /Users/PC-MIKE/UNIR/UNIR_actividades/TFM/TESIS/mlruns    --host 0.0.0.0 --port 5100
 
 
+#VAlidar LINIX
+pip install psycopg2-binary
 
 import mlflow.pyfunc
 
@@ -120,9 +186,9 @@ mlflow models serve -m "models:/sk-learn-random-forest-reg-model/Production" -p 
 
 mlflow models serve -m "models:/iris_model/Staging" -p 1235 --host 0.0.0.0
 
-mlflow models serve -m "models:/ElasticnetWineModel/Production" -p 1236 --host 0.0.0.0
+mlflow models serve -m "models:/ElasticnetWineModel/Production" --port 1236 --host 0.0.0.0
 
-mlflow models serve -m "models:/ElasticnetWineModel/Staging" -p 1237 --host 0.0.0.0
+mlflow models serve -m "models:/ElasticnetWineModel/Staging" --port 1237 --host 0.0.0.0
 
 
 

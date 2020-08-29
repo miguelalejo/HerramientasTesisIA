@@ -1,7 +1,9 @@
+sudo vi /etc/profile
+
 #JDK 1.8+ installed with JAVA_HOME configured appropriately
 #Copiar JVM
 tar xvzf jdk-11.0.8_linux-x64_bin.tar.gz
-sudo vim /etc/profile
+
 export JAVA_HOME=/home/ubuntu/jdk-11.0.8
 export PATH=$JAVA_HOME/bin:$PATH
 

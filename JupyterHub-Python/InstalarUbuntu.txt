@@ -1,0 +1,89 @@
+sudo apt update
+sudo apt -y upgrade
+#Version
+python3 -V
+sudo apt install -y python3-pip
+sudo apt install -y build-essential libssl-dev libffi-dev python3-dev
+#Install Numpy
+pip3 install numpy
+pip3 install notebook
+
+
+##Instalar JUPYTER LAV y NOTE BOOL
+pipenv install jupyterlab
+pip3 install jupyter jupyterlab
+
+
+
+#Crear serrvicio arranque
+sudo vi /etc/systemd/system/jupyterlab-server.service
+
+[Unit]
+Requires=network.target remote-fs.target
+After=network.target remote-fs.target
+
+[Service]
+Type=simple
+User=ubuntu
+ExecStart=/home/ubuntu/.local/bin/jupyter lab --no-browser --port=9999 --ip=0.0.0.0 --NotebookApp.token= --notebook-dir='/home/ubuntu/proyectos-ml'
+ExecStop=kill $(pgrep jupyter)
+Restart=on-abnormal
+
+[Install]
+WantedBy=default.target
+
+
+
+#ARRANCA SERVICIO
+sudo systemctl enable jupyterlab-server.service
+systemctl start jupyterlab-server.service
+systemctl stop jupyterlab-server.service
+
+
+
+
+##Configurar
+jupyter notebook --generate-config
+##Modificar el archivo
+vi  /home/ubuntu/.jupyter/jupyter_notebook_config.py
+#Agregar las lienas
+c.NotebookApp.notebook_dir = '/home/ubuntu/proyectos-ml'
+c.NotebookApp.ip = '*'
+c.NotebookApp.open_browser = False
+c.NotebookApp.port = 9999
+
+
+
+## Arrancar Jupyter
+jupyter notebook --port 9999 --no-browser --ip 0.0.0.0
+
+
+## Arrancar Jupyter Lab
+jupyter lab
+
+##crear directorio trabajo
+mkdir proyectos-ml
+
+
+
+
+##NO FUNCIONA
+#Instalar NPM;
+sudo apt install nodejs
+sudo apt install npm
+nodejs -v
+
+pip3 install -U jupyterlab
+git clone https://github.com/jupyterlab/jupyterlab-git.git
+cd jupyterlab-git
+pip3 install -e .[test]
+jupyter serverextension enable --py jupyterlab_git
+jlpm
+jupyter labextension install .
+
+
+pip3 install --upgrade jupyterlab-git
+jupyter lab build
+jupyter serverextension enable --py jupyterlab_git
+jupyter labextension install jupyterlab-plotly
+pip3 install jupyterlab-git

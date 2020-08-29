@@ -1,0 +1,7 @@
+https://github.com/krassowski/nbpipeline
+https://github.com/kubeflow-kale/kale
+
+Any experience with large cvs files, so I mean I will read hundres or csv files in production?
+
+Tutorial: KubeEdge Hands on Workshop -- Build Your Edge AI App on Real Edge Devices - Zefeng Wang, Huawei & Zhang Jie, China Unicom
+INXPO

@@ -1,0 +1,27 @@
+kafka-topics.sh --create --zookeeper 192.168.1.20:2181 --replication-factor 1 --partitions 1 --topic topico_documento_generado
+kafka-console-consumer.sh --bootstrap-server 192.168.1.20:9092 --topic topico_documento_generado --from-beginning
+
+
+kafka-topics.sh --create --zookeeper 192.168.1.20:2181 --replication-factor 1 --partitions 1 --topic topico_fatura_detalle
+kafka-console-consumer.sh --bootstrap-server 192.168.1.20:9092 --topic topico_fatura_detalle --from-beginning
+kafka-topics.sh --zookeeper 192.168.1.20:2181 --delete --topic topico_fatura_detalle
+
+
+kafka-topics.sh --create --zookeeper 192.168.1.20:2181 --replication-factor 1 --partitions 1 --topic topico_archivo_csv
+kafka-console-producer.sh --broker-list 192.168.1.20:9092 --topic topico_archivo_csv
+kafka-console-consumer.sh --bootstrap-server 192.168.1.20:9092 --topic topico_archivo_csv --from-beginning
+
+
+kafka-topics.sh --create --zookeeper 192.168.1.20:2181 --replication-factor 1 --partitions 1 --topic topico_fatura_detalle_impuesto
+kafka-console-producer.sh --broker-list 192.168.1.20:9092 --topic topico_fatura_detalle_impuesto
+kafka-console-consumer.sh --bootstrap-server 192.168.1.20:9092 --topic topico_fatura_detalle_impuesto --from-beginning
+
+
+kafka-console-consumer.sh --bootstrap-server 192.168.1.20:9092 --topic topico_modelo_registrado --from-beginning
+
+
+##Consumidores Streams
+kafka-console-consumer.sh --bootstrap-server 192.168.1.20:9092 --topic topico_merge_fatura_detalle_impuesto --from-beginning
+
+
+

@@ -1,0 +1,17 @@
+##Copiar el programa 
+nifi-1.11.4-bin.tar.gz
+##Descomprimir Nifi
+tar xvzf nifi-1.11.4-bin.tar.gz
+
+##Ir a la configuracion
+HTTP Port
+
+nifi.web.http.port=8070
+
+#Arrancar 
+./bin/nifi
+
+##Navegar
+http://192.168.1.20:8070/nifi
+
+

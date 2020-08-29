@@ -1,0 +1,176 @@
+CREATE STREAM RATINGS (codigoPrincipal VARCHAR, \
+                             codigoAuxiliar VARCHAR, \
+                             descripcion VARCHAR, \
+                             cantidad DOUBLE, \
+                             precioUnitario DOUBLE, \
+                             descuento DOUBLE, \
+                             precioTotalSinImpuesto DOUBLE) \
+        WITH (KAFKA_TOPIC='faturadetalle', \
+        VALUE_FORMAT='JSON');
+		
+SET 'auto.offset.reset'='earliest';
+SELECT * message FROM RATINGS;
+
+SELECT codigoPrincipal, codigoAuxiliar, descripcion FROM RATINGS EMIT CHANGES;
+
+SELECT codigoPrincipal, codigoAuxiliar, descripcion ,
+       TIMESTAMPTOSTRING(window_start, 'yyy-MM-dd HH:mm:ss', 'UTC') as window_start,
+       TIMESTAMPTOSTRING(window_end, 'yyy-MM-dd HH:mm:ss', 'UTC') as window_end
+FROM RATINGS
+EMIT CHANGES
+LIMIT 11;
+
+SELECT codigoPrincipal, codigoAuxiliar, descripcion,
+       COUNT(*) AS rating_count,
+       WINDOWSTART AS window_start,
+       WINDOWEND AS window_end
+FROM RATINGS
+WINDOW TUMBLING (SIZE 6 HOURS)
+GROUP BY codigoPrincipal, codigoAuxiliar, descripcion
+EMIT CHANGES
+LIMIT 100;
+
+SELECT codigoPrincipal, codigoAuxiliar, descripcion,
+       COUNT(*) AS rating_count,
+       WINDOWSTART AS window_start,
+       WINDOWEND AS window_end
+FROM RATINGS
+WINDOW TUMBLING (SIZE 10 SECONDS)
+GROUP BY codigoPrincipal, codigoAuxiliar, descripcion
+EMIT CHANGES;
+
+
+
+SELECT * FROM RATINGS
+  WHERE regionId = 'Region_1'
+    AND '2019-08-16T07:40:00' <= WINDOWSTART AND WINDOWEND <= '2019-08-16T07:48:00';
+
+SELECT * FROM RATINGS WHERE '2019-08-16T07:40:00' <= WINDOWSTART AND WINDOWEND <= '2019-08-16T07:48:00';
+
+SELECT * FROM RATINGS WHERE ROWKEY='true'
+	
+8/16/20 7:48:45
+
+curl -X "POST" "http://192.168.1.20:8088/query" \
+     -H "Content-Type: application/json; charset=utf-8" \
+     -d $'{
+  "ksql": "SELECT * FROM RATINGS EMIT CHANGES LIMIT 10;",
+  "streamsProperties": {
+  "ksql.streams.auto.offset.reset":
+      "earliest"
+  }
+}'
+
+
+curl -X "POST" "http://192.168.1.20:8088/query" \
+     -H "Content-Type: application/json; charset=utf-8" \
+     -d $'{
+  "ksql": "SELECT codigoPrincipal, codigoAuxiliar, descripcion FROM RATINGS EMIT CHANGES LIMIT 10;",
+  "streamsProperties": {
+  "ksql.streams.auto.offset.reset":
+      "earliest"
+  }
+}'
+
+curl -X "POST" "http://192.168.1.20:8088/query" \
+     -H "Content-Type: application/json; charset=utf-8" \
+     -d $'{
+  "ksql": "SELECT codigoPrincipal, codigoAuxiliar, descripcion FROM RATINGS EMIT CHANGES LIMIT 10;",
+  "streamsProperties": {
+  "ksql.streams.auto.offset.reset":
+      "earliest"
+  }
+}'
+
+curl -X "POST" "http://192.168.1.20:8088/query" \
+     -H "Content-Type: application/json; charset=utf-8" \
+     -d $'{
+  "ksql": "SELECT ROWTIME,count(ROWTIME) FROM RATINGS GROUP BY ROWTIME EMIT CHANGES;",
+  "streamsProperties": {
+  "ksql.streams.auto.offset.reset":
+      "earliest"
+  }
+}'
+
+
+curl -X "POST" "http://192.168.1.20:8088/query" \
+     -H "Content-Type: application/json; charset=utf-8" \
+     -d $'{
+  "ksql": "SELECT codigoPrincipal, codigoAuxiliar, descripcion FROM RATINGS EMIT CHANGES;",
+  "streamsProperties": {
+  "ksql.streams.auto.offset.reset":
+      "earliest"
+  }
+}'
+
+
+curl -X "POST" "http://192.168.1.20:8088/ksql" \
+     -H "Content-Type: application/vnd.ksql.v1+json; charset=utf-8" \
+     -d $'{
+  "ksql": "LIST STREAMS;",
+  "streamsProperties": {}
+}'
+
+
+
+ DESCRIBE EXTENDED RATINGS;
+ 
+  DROP STREAM RATINGS;
+  
+ CREATE STREAM RATINGS (codigoPrincipal VARCHAR, \
+                             codigoAuxiliar VARCHAR, \
+                             descripcion VARCHAR, \
+                             cantidad DOUBLE, \
+                             precioUnitario DOUBLE, \
+                             descuento DOUBLE, \
+                             precioTotalSinImpuesto DOUBLE) \ 
+							 WITH (KAFKA_TOPIC='faturadetalle', \
+							 VALUE_FORMAT='JSON');
+							 
+print 'faturadetalle' FROM BEGINNING;
+
+
+
+
+###TOPICOS SIN ESPACIOS
+kafka-topics.sh --create --zookeeper 192.168.1.20:2181 --replication-factor 1 --partitions 1 --topic topicodocumentogenerado
+kafka-console-producer.sh --broker-list 192.168.1.20:9092 --topic topicodocumentogenerado
+kafka-console-consumer.sh --bootstrap-server 192.168.1.20:9092 --topic topicodocumentogenerado --from-beginning
+
+TERMINATE CSAS_STREAM_DOCUMENTO_DETALLE_CUATRO_17;
+DROP STREAM IF EXISTS STREAM_DOCUMENTO_DETALLE_CUATRO DELETE TOPIC;
+
+
+
+import logging
+from ksql import KSQLAPI
+logging.basicConfig(level=logging.DEBUG)
+client = KSQLAPI('http://192.168.1.20:8088')
+print(client.ksql('show STREAMS'))
+print(client.ksql('show TABLES'))
+print(client.ksql('SHOW QUERIES'))
+
+import requests
+query = {
+  "ksql": "CREATE STREAM stream_documento_generado (idDocumento VARCHAR, claveAcceso VARCHAR) WITH (KAFKA_TOPIC='topico_documento_generado', VALUE_FORMAT='JSON');",
+  "streamsProperties": {
+  "ksql.streams.auto.offset.reset":
+      "earliest"
+  }
+}
+r = requests.post('http://192.168.1.20:8088/ksql',json = query)
+print(r)
+print(r.json())
+
+
+import requests
+query = {
+  "ksql": "CREATE STREAM stream_fatura_detalle (idDocumento VARCHAR,claveAcceso VARCHAR,codigoPrincipal VARCHAR, codigoAuxiliar VARCHAR, descripcion VARCHAR, cantidad DOUBLE, precioUnitario DOUBLE, descuento DOUBLE, precioTotalSinImpuesto DOUBLE) WITH (KAFKA_TOPIC='topico_fatura_detalle', VALUE_FORMAT='JSON');",
+  "streamsProperties": {
+  "ksql.streams.auto.offset.reset":
+      "earliest"
+  }
+}
+r = requests.post('http://192.168.1.20:8088/ksql',json = query)
+# print(r)
+print(r.json())

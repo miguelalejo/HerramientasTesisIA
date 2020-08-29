@@ -1,0 +1,2 @@
+https://github.com/demo-thursday/quarkus-kafka-tekton
+https://github.com/joellord/handson-tekton

@@ -3,11 +3,17 @@ https://packages.confluent.io/archive/5.5/confluent-community-5.5.1-2.12.tar.gz
 
 https://docs.confluent.io/4.1.2/ksql/docs/installation/installing.html
 
+CREAR ARCHIVO PROPIEDADES
+cd confluent-5.5.1
+vi ./etc/ksqldb/ksql-server-ia.properties
+
 AGGREG CONGI
 bootstrap.servers=192.168.1.20:9092
 listeners=http://192.168.1.20:8088
 ui.enabled=true
+ksql.streams.auto.offset.reset ='earliest'
 
+# SET auto.offest.reset = earliest
 ARRANCAR SERVER
 ./bin/ksql-server-start ./etc/ksqldb/ksql-server-ia.properties
 
@@ -32,12 +38,13 @@ WantedBy=multi-user.target
 
 
 ARRANCA SERVICIO
-systemctl start ksql-server.service 
+sudo systemctl enable ksql-server.service 
 systemctl start ksql-server.service 
 systemctl stop ksql-server.service 
 
 
-URL TEST
+#URL TEST
+#Status server
 http://192.168.1.20:8088/info
 
 
@@ -49,13 +56,27 @@ https://pypi.org/project/ksql/
 
 CLIENTE CONFLUENT
 pip install confluent-kafka
+pip3 install confluent-kafka
+
+pip install ksql
+pip3 install ksql
+
+
 
 CLIENTE UBUNTU
 ./ksql http://192.168.1.20:8088
 
 PARA DESARROLLO CONFIGURAR 
-SET auto.offest.reset = 'earliest'
+SET auto.offest.reset = 'earliest';
+
 
 
 VIDEOS
 https://docs.ksqldb.io/en/latest/tutorials/
+
+
+INSTALAR LIBRERIA REQUEST API
+pip install requests
+pip3 install requests
+pip install pandas
+pip3 install pandas
